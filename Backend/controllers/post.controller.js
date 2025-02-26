@@ -1,6 +1,7 @@
 import User from "../models/user.model.js";
 import Post from "../models/post.model.js";
 import Notification from "../models/notification.model.js";
+import { v2 as cloudinary } from "cloudinary";
 
 export const createPost = async (req, res) => {
     try {
@@ -102,7 +103,9 @@ export const likeUnlikePost = async (req, res) => {
         if(userLikedPost) {
              await Post.updateOne({_id: postId}, {$pull: {likes: userId}});
              await User.updateOne({_id: userId}, {$pull: {likedPosts: postId}});
-             res.status(200).json({ message: "Post unliked" });
+
+             const updatedLikes = post.likes.filter((id) => id.toString() !== userId.toString());
+             res.status(200).json(updatedLikes);
         } else {
             post.likes.push(userId);
             await User.updateOne({_id: userId}, {$push: {likedPosts: postId}});
@@ -115,7 +118,8 @@ export const likeUnlikePost = async (req, res) => {
         });
         await notification.save();
 
-        res.status(200).json({ message: "Post liked" });
+        const updatedLikes = post.likes;
+        res.status(200).json( updatedLikes );
         }
     } catch ( error ) {
         res.status(500).json({ error: "internal server error" });
