@@ -7,23 +7,20 @@ import RightPanelSkeleton from "../skeletons/RightPanelSkeleton";
 import LoadingSpinner from "./LoadingSpinner";
 
 const RightPanel = () => {
-	const { data: suggestedUsers, isLoading} = useQuery({
+	const { data: suggestedUsers, isLoading } = useQuery({
 		queryKey: ["suggestedUsers"],
 		queryFn: async () => {
 			try {
 				const res = await fetch("/api/users/suggested");
 				const data = await res.json();
-				console.log("API Response:", data); 
-
 				if (!res.ok) {
 					throw new Error(data.error || "Something went wrong!");
 				}
-				return Array.isArray(data) ? data : data.users;
+				return data;
 			} catch (error) {
 				throw new Error(error.message);
 			}
 		},
-		retry: 1,
 	});
 
 	const { follow, isPending } = useFollow();
@@ -44,7 +41,8 @@ const RightPanel = () => {
 							<RightPanelSkeleton />
 						</>
 					)}
-						{!isLoading && Array.isArray(suggestedUsers) && suggestedUsers.map((user) => (
+					{!isLoading &&
+						suggestedUsers?.map((user) => (
 							<Link
 								to={`/profile/${user.username}`}
 								className='flex items-center justify-between gap-4'

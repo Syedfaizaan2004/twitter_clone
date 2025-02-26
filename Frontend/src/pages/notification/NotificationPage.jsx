@@ -16,9 +16,7 @@ const NotificationPage = () => {
 			try {
 				const res = await fetch("/api/notifications");
 				const data = await res.json();
-				if (!res.ok) {
-					throw new Error(data.error || "Something went wrong");
-				}
+				if (!res.ok) throw new Error(data.error || "Something went wrong");
 				return data;
 			} catch (error) {
 				throw new Error(error);
@@ -34,9 +32,7 @@ const NotificationPage = () => {
 				});
 				const data = await res.json();
 
-				if (!res.ok) {
-					throw new Error(data.error || "Something went wrong");
-				}
+				if (!res.ok) throw new Error(data.error || "Something went wrong");
 				return data;
 			} catch (error) {
 				throw new Error(error);
@@ -75,8 +71,8 @@ const NotificationPage = () => {
 						<LoadingSpinner size='lg' />
 					</div>
 				)}
-				{!isLoading && Array.isArray(notifications) && notifications?.length === 0 && <div className='text-center p-4 font-bold'>No notifications 🤔</div>}
-				{!isLoading && Array.isArray(notifications) && notifications.map((notification) => (
+				{notifications?.length === 0 && <div className='text-center p-4 font-bold'>No notifications 🤔</div>}
+				{notifications?.map((notification) => (
 					<div className='border-b border-gray-700' key={notification._id}>
 						<div className='flex gap-2 p-4'>
 							{notification.type === "follow" && <FaUser className='w-7 h-7 text-primary' />}
